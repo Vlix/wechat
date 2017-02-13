@@ -1,8 +1,6 @@
 module Web.WeChat.Internal
   ( module Web.WeChat.Instances
   , module Web.WeChat.Types
-  , EncodeMsg (..)
-  , EncodedMessage (..)
   , verifyAESkeyLength
   , sha1VerifySignature
   , encryptMsg
@@ -14,11 +12,11 @@ import           Prelude                hiding (take,(!!),length,repeat)
 import           Web.WeChat.Instances
 import           Web.WeChat.Types
 
-import           Control.Monad          (sequence)
 import           Control.Monad.IO.Class
 import           Crypto.Cipher.AES
 import           Crypto.Cipher.Types
 import           Crypto.Data.Padding
+import           Crypto.Error
 import           Crypto.Hash
 import qualified Data.ByteArray         as BA
 import           Data.ByteString        (ByteString)
@@ -43,44 +41,46 @@ verifyAESkeyLength x =
 
 encryptMsg :: MonadIO m => ByteString -> ByteString -> ByteString -> m (Either String ByteString)
 encryptMsg aeskey text appid =
-  either (return . Left) continueEncryption $ makeIVfromB64 aeskey
+  either (return . Left) continueEncryption $ makeAESIVfromB64 aeskey
  where
   strLen = toByteString . BLD.toLazyByteString . BLD.int32BE $ (fromIntegral $ BS.length text :: Int32)
-  continueEncryption iv = do
-    random16 <- sequence $ take 16 $ repeat $ getRandom alphaNums
-    let toEncrypt' = toByteString random16 <> strLen <> text <> appid
-        toEncrypt  = padPKCS7 toEncrypt'
-        ciphertxt  = cbcEncrypt (undefined :: AES128) iv toEncrypt
-    return $ Right ciphertxt
+  continueEncryption (aes,iv) =
+    case cipherInit aes of
+      CryptoFailed err -> return $ Left $ "IllegalAesKey: encryptMsg failed to make AES key: " <> show err
+      CryptoPassed key -> do
+        random16 <- sequence $ take 16 $ repeat $ getRandom alphaNums
+        let toEncrypt = padPKCS7 $ toByteString random16 <> strLen <> text <> appid
+            ciphertxt = cbcEncrypt key iv toEncrypt
+        return $ Right ciphertxt
 
 decryptMsg :: Monad m => ByteString -> ByteString -> ByteString -> m (Either String ByteString)
 decryptMsg aeskey encrypted appid =
-  either (return . Left) continueDecryption $ makeIVfromB64 aeskey
+  either (return . Left) continueDecryption $ makeAESIVfromB64 aeskey
  where
-  continueDecryption iv =
-    case mUnpadded of
-      Nothing -> return $ Left "PKCS7ParseError: decryptMsg failed to unpad the decrypted message"
-      Just unpadded -> do
-        let removedRandom16 = BS.drop 16 unpadded
-            (lengthBS,rest) = BS.splitAt 4 removedRandom16
-            mMsgLength = word8ToInt $ BS.unpack lengthBS
-        case mMsgLength of
-          Nothing -> return $ Left "ContentLengthError: decryptMsg failed to get 4-length byte sequence"
-          Just msgLength -> do
-            let (content,appIdToVerify) = BS.splitAt msgLength rest
-            if appIdToVerify /= appid
-              then return $ Left "ValidateAppidError: decryptMsg failed to verify validity of provided AppID"
-              else return $ Right content
+  continueDecryption (aes,iv) =
+    case cipherInit aes of
+      CryptoFailed err -> return $ Left $ "IllegalAesKey: encryptMsg failed to make AES key: " <> show err
+      CryptoPassed key -> do
+        let decrypted = cbcDecrypt key iv encrypted
+        case unpadPKCS7 decrypted of
+          Nothing -> return $ Left "PKCS7ParseError: decryptMsg failed to unpad the decrypted message"
+          Just unpadded -> do
+            let removedRandom16 = BS.drop 16 unpadded
+                (lengthBS,rest) = BS.splitAt 4 removedRandom16
+                mMsgLength = word8ToInt $ BS.unpack lengthBS
+            case mMsgLength of
+              Nothing -> return $ Left "ContentLengthError: decryptMsg failed to get 4-length byte sequence"
+              Just msgLength -> do
+                let (content,appIdToVerify) = BS.splitAt msgLength rest
+                if appIdToVerify /= appid
+                  then return $ Left "ValidateAppidError: decryptMsg failed to verify validity of provided AppID"
+                  else return $ Right content
    where
-    decrypted = cbcDecrypt (undefined :: AES128) iv encrypted
-    mUnpadded = unpadPKCS7 decrypted
     word8ToInt :: [Word8] -> Maybe Int
-    word8ToInt (a:b:c:d:[]) = Just $ (a' * 16 ^ 3) + (b' * 16 ^ 2) + (c' * 16) + d'
+    word8ToInt (a:b:c:d:[]) = go $ fmap fromIntegral [a,b,c,d]
      where
-      a' = fromIntegral a
-      b' = fromIntegral b
-      c' = fromIntegral c
-      d' = fromIntegral d
+      go (a':b':c':d':[]) = Just $ (a' * 16 ^ (3 :: Int)) + (b' * 16 ^ (2 :: Int)) + (c' * 16) + d'
+      go _ = Nothing
     word8ToInt _ = Nothing
 
 
@@ -91,11 +91,12 @@ mkVerifySignature :: ToByteString a => [a] -> Digest SHA1
 mkVerifySignature = hash . mconcat . sort . fmap toByteString
 
 
-makeIVfromB64 :: ByteString -> Either String (IV AES128)
-makeIVfromB64 aeskey =
-  either (const $ Left decodeB64Error) getIV $ B64.decode (aeskey <> "=")
+makeAESIVfromB64 :: ByteString -> Either String (ByteString,IV AES128)
+makeAESIVfromB64 aeskey =
+  either (const $ Left decodeB64Error) getIV decodedAES
  where
-  getIV          = maybe (Left encryptError) Right . mkIV
+  decodedAES   = B64.decode (aeskey <> "=")
+  getIV validAESkey = maybe (Left encryptError) (Right . (,) validAESkey) $ mkIV validAESkey
   decodeB64Error = "DecodeBase64Error: encryptMsg failed to decode (AESkey + =)"
   encryptError   = "EncryptAESError: encryptMsg failed to makeIV of decoded Base64 decoded AESkey"
   mkIV :: ByteString -> Maybe (IV AES128)

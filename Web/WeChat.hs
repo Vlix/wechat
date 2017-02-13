@@ -10,12 +10,12 @@ import           Data.Monoid            ((<>))
 
 encodeMsg :: (MonadIO m, ToByteString a) => EncodeMsg a -> m (Either String EncodedMessage)
 encodeMsg EncodeMsg{..} =
-  case verifyAESkeyLength encodeMsgAESkey of
+  case verifyAESkeyLength encodeMsgAESKey of
     Left err -> return $ Left err
     Right verifiedAES -> do
       let replyMsg  = toByteString encodeMsgReplyMsg
           appId     = toByteString encodeMsgAppId
-      encrypted <- encryptMsg replyMsg appId verifiedAES
+      encrypted <- encryptMsg verifiedAES replyMsg appId
       case encrypted of
         Left err  -> return $ Left err
         Right enc -> do
@@ -32,4 +32,13 @@ encodeMsg EncodeMsg{..} =
 
 decodeMsg :: (MonadIO m, ToByteString a) => DecodeMsg a -> m (Either String DecodedMessage)
 decodeMsg DecodeMsg{..} =
-  case verifyAESkeyLength aesKey
+  case verifyAESkeyLength decodeMsgAESKey of
+    Left err -> return $ Left err
+    Right verifiedAES -> do
+      let decodedSignature = sha1VerifySignature [decodeMsgToken,decodeMsgNonce,decodeMsgTimeStamp,decodeMsgEncrypt]
+      if decodedSignature /= toByteString decodeMsgSignature
+        then return $ Left "ValidateSignatureError: decodeMsg failed to validate signature"
+        else do
+          let appId   = toByteString decodeMsgAppId
+              encrypt = toByteString decodeMsgEncrypt
+          return . either Left (Right . Decoded) =<< decryptMsg verifiedAES encrypt appId

@@ -20,7 +20,8 @@ library
                        Web.WeChat.Instances
                        Web.WeChat.Internal
                        Web.WeChat.Types
-  -- other-modules:       
+                       Web.WeChat.XMLParse
+  other-modules:       TestParse
   -- other-extensions:    
   default-extensions:  OverloadedStrings
                        PatternGuards
@@ -35,5 +36,7 @@ library
                      , semigroups           >= 0.18 && < 0.19
                      , text                 >= 0.11 && < 2.0
                      , transformers         >= 0.4  && < 0.5
+                     , xml
+                     , time
   -- hs-source-dirs:      
   default-language:    Haskell2010

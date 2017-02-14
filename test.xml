@@ -1,0 +1,152 @@
+<!-- 1 -->
+<xml>
+<ToUserName><![CDATA[toUser]]></ToUserName>
+<FromUserName><![CDATA[fromUser]]></FromUserName> 
+<CreateTime>1348831860</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[this is a test]]></Content>
+<MsgId>1234567890123456</MsgId>
+</xml>
+
+<!-- 2 -->
+<xml>
+<ToUserName><![CDATA[toUser]]></ToUserName>
+<FromUserName><![CDATA[fromUser]]></FromUserName>
+<CreateTime>1348831860</CreateTime>
+<MsgType><![CDATA[image]]></MsgType>
+<PicUrl><![CDATA[this is a url]]></PicUrl>
+<MediaId><![CDATA[media_id]]></MediaId>
+<MsgId>1234567890123456</MsgId>
+</xml>
+
+<!-- 3 -->
+<xml>
+<ToUserName><![CDATA[toUser]]></ToUserName>
+<FromUserName><![CDATA[fromUser]]></FromUserName>
+<CreateTime>1357290913</CreateTime>
+<MsgType><![CDATA[voice]]></MsgType>
+<MediaId><![CDATA[media_id]]></MediaId>
+<Format><![CDATA[Format]]></Format>
+<MsgId>1234567890123456</MsgId>
+</xml>
+
+<!-- 4 -->
+<xml>
+<ToUserName><![CDATA[toUser]]></ToUserName>
+<FromUserName><![CDATA[fromUser]]></FromUserName>
+<CreateTime>1357290913</CreateTime>
+<MsgType><![CDATA[video]]></MsgType>
+<MediaId><![CDATA[media_id]]></MediaId>
+<ThumbMediaId><![CDATA[thumb_media_id]]></ThumbMediaId>
+<MsgId>1234567890123456</MsgId>
+</xml>
+
+<!-- 5 -->
+<xml>
+<ToUserName><![CDATA[toUser]]></ToUserName>
+<FromUserName><![CDATA[fromUser]]></FromUserName>
+<CreateTime>1351776360</CreateTime>
+<MsgType><![CDATA[location]]></MsgType>
+<Location_X>23.134521</Location_X>
+<Location_Y>113.358803</Location_Y>
+<Scale>20</Scale>
+<Label><![CDATA[Location]]></Label>
+<MsgId>1234567890123456</MsgId>
+</xml>
+
+<!-- 6 -->
+<xml>
+<ToUserName><![CDATA[toUser]]></ToUserName>
+<FromUserName><![CDATA[fromUser]]></FromUserName>
+<CreateTime>1351776360</CreateTime>
+<MsgType><![CDATA[link]]></MsgType>
+<Title><![CDATA[Official Account Admin Platform Website Link]]></Title>
+<Description><![CDATA[Official Account Admin Platform Website Link]]></Description>
+<Url><![CDATA[url]]></Url>
+<MsgId>1234567890123456</MsgId>
+</xml> 
+
+<!-- 7 -->
+<xml>
+<ToUserName><![CDATA[toUser]]></ToUserName>
+<FromUserName><![CDATA[FromUser]]></FromUserName>
+<CreateTime>123456789</CreateTime>
+<MsgType><![CDATA[event]]></MsgType>
+<Event><![CDATA[subscribe]]></Event>
+</xml>
+
+<!-- 8 -->
+<xml>
+<ToUserName><![CDATA[toUser]]></ToUserName>
+<FromUserName><![CDATA[FromUser]]></FromUserName>
+<CreateTime>123456789</CreateTime>
+<MsgType><![CDATA[event]]></MsgType>
+<Event><![CDATA[unsubscribe]]></Event>
+</xml>
+
+<!-- 9 -->
+<xml>
+<ToUserName><![CDATA[toUser]]></ToUserName>
+<FromUserName><![CDATA[FromUser]]></FromUserName>
+<CreateTime>123456789</CreateTime>
+<MsgType><![CDATA[event]]></MsgType>
+<Event><![CDATA[subscribe]]></Event>
+<EventKey><![CDATA[qrscene_123123]]></EventKey>
+<Ticket><![CDATA[TICKET]]></Ticket>
+</xml>
+
+<!-- 10 -->
+<xml>
+<ToUserName><![CDATA[toUser]]></ToUserName>
+<FromUserName><![CDATA[FromUser]]></FromUserName>
+<CreateTime>123456789</CreateTime>
+<MsgType><![CDATA[event]]></MsgType>
+<Event><![CDATA[scan]]></Event>
+<EventKey><![CDATA[SCENE_VALUE]]></EventKey>
+<Ticket><![CDATA[TICKET]]></Ticket>
+</xml>
+
+<!-- 11 -->
+<xml>
+<ToUserName><![CDATA[toUser]]></ToUserName>
+<FromUserName><![CDATA[fromUser]]></FromUserName>
+<CreateTime>123456789</CreateTime>
+<MsgType><![CDATA[event]]></MsgType>
+<Event><![CDATA[LOCATION]]></Event>
+<Latitude>23.137466</Latitude>
+<Longitude>113.352425</Longitude>
+<Precision>119.385040</Precision>
+</xml>
+
+<!-- 12 -->
+<xml>
+<ToUserName><![CDATA[toUser]]></ToUserName>
+<FromUserName><![CDATA[FromUser]]></FromUserName>
+<CreateTime>123456789</CreateTime>
+<MsgType><![CDATA[event]]></MsgType>
+<Event><![CDATA[CLICK]]></Event>
+<EventKey><![CDATA[EVENTKEY]]></EventKey>
+</xml>
+
+<!-- 13 -->
+<xml>
+<ToUserName><![CDATA[toUser]]></ToUserName>
+<FromUserName><![CDATA[FromUser]]></FromUserName>
+<CreateTime>123456789</CreateTime>
+<MsgType><![CDATA[event]]></MsgType>
+<Event><![CDATA[VIEW]]></Event>
+<EventKey><![CDATA[www.qq.com]]></EventKey>
+</xml>
+
+<!-- 14 -->
+<xml>
+<ToUserName><![CDATA[toUser]]></ToUserName>
+<FromUserName><![CDATA[fromUser]]></FromUserName>
+<CreateTime>1357290913</CreateTime>
+<MsgType><![CDATA[voice]]></MsgType>
+<MediaId><![CDATA[media_id]]></MediaId>
+<Format><![CDATA[Format]]></Format>
+<Recognition><![CDATA[WeChat Team]]></Recognition>
+<MsgId>1234567890123456</MsgId>
+</xml>
+

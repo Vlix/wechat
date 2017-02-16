@@ -79,8 +79,7 @@ data OutCallbackMessage = OutMessage { outCbFrom       :: Text
                                      , outCbContent    :: OutMessageContent
                                      }
 
-data OutCSMessage = OutCSMessage { outCSAccessToken :: Text
-                                 , outCSTo          :: Text
+data OutCSMessage = OutCSMessage { outCSTo          :: Text
                                  , outCSContent     :: OutMessageContent
                                  }
 

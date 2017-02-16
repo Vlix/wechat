@@ -10,7 +10,7 @@ import           Data.Maybe (maybeToList)
 import Web.WeChat.Types
 
 instance ToJSON OutCSMessage where
-  toJSON (OutCSMessage _token to cont) = object $
+  toJSON (OutCSMessage to cont) = object $
     [ "touser" .= to ] ++
     outJSON cont
 

@@ -19,6 +19,7 @@ library
   exposed-modules:     Web.WeChat
                        Web.WeChat.Instances
                        Web.WeChat.Internal
+                       Web.WeChat.JSONPrint
                        Web.WeChat.Types
                        Web.WeChat.XMLParse
                        Web.WeChat.XMLPrint

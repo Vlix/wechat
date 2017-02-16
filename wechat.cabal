@@ -21,6 +21,7 @@ library
                        Web.WeChat.Internal
                        Web.WeChat.Types
                        Web.WeChat.XMLParse
+                       Web.WeChat.XMLPrint
   other-modules:       TestParse
   -- other-extensions:    
   default-extensions:  OverloadedStrings

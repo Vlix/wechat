@@ -1,5 +1,5 @@
 module Web.WeChat.XMLParse where
-
+ 
 import           Control.Monad (guard)
 
 import qualified Data.Text as T
@@ -7,7 +7,6 @@ import           Data.Time.Clock.POSIX (posixSecondsToUTCTime)
 
 import           Text.Read (readMaybe)
 import           Text.XML.Light
-import           Text.XML.Light.Lexer (XmlSource)
 
 import           Web.WeChat.Types
 
@@ -29,9 +28,6 @@ textTag txt elt = textContent <$> findChild (tag txt) elt
 
 readTag :: Read a => T.Text -> Element -> Maybe a
 readTag txt elt = readContent =<< findChild (tag txt) elt
-
-parseInMessage :: XmlSource s => s -> Maybe InMessage
-parseInMessage s = parseXMLDoc s >>= parseInMessage'
 
 parseInMessage' :: Element -> Maybe InMessage
 parseInMessage' elt = do
@@ -65,7 +61,13 @@ parseInMessageContent "location" = parseLocationMessage
 parseInMessageContent "link"     = parseLinkMessage
 parseInMessageContent _          = const Nothing
 
-parseEventMessage, parseTextMessage, parseImageMessage, parseVoiceMessage, parseVideoMessage, parseLocationMessage, parseLinkMessage :: Element -> Maybe InMessageContent
+parseEventMessage,
+  parseTextMessage,
+  parseImageMessage,
+  parseVoiceMessage,
+  parseVideoMessage,
+  parseLocationMessage,
+  parseLinkMessage :: Element -> Maybe InMessageContent
 
 parseTextMessage elt = InText <$> textTag "Content" elt
 parseImageMessage elt = do
@@ -105,7 +107,11 @@ parseEventMessage elt = do
     "view"        -> parseEventRedirect elt
     _             -> Nothing
 
-parseEventSubscribe, parseEventScan, parseEventLocation, parseEventClick, parseEventRedirect :: Element -> Maybe InMessageContent
+parseEventSubscribe,
+  parseEventScan,
+  parseEventLocation,
+  parseEventClick,
+  parseEventRedirect :: Element -> Maybe InMessageContent
 
 parseEventSubscribe elt = do
   case textTag "EventKey" elt of

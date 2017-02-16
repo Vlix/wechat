@@ -21,7 +21,7 @@ data EncodeMsg a = EncodeMsg
 newtype DecodedMessage = Decoded { decMsg :: ByteString }
 
 data DecodeMsg a = DecodeMsg
-  { decodeMsgEncrypt   :: a -- XML message to be sent to WeChat
+  { decodeMsgEncrypt   :: a -- encrypted XML message sent from WeChat
   , decodeMsgSignature :: a
   , decodeMsgToken     :: a
   , decodeMsgAESKey    :: a

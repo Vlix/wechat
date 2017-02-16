@@ -28,9 +28,6 @@ textTag lbl txt = stringTag lbl (T.unpack txt)
 showTag :: Show a => T.Text -> a -> Element
 showTag lbl thing = stringTag lbl (show thing)
 
-printOutMessage :: OutCallbackMessage -> T.Text
-printOutMessage = T.pack . showElement . eltTag "xml" . printOutMessage'
-
 printOutMessage' :: OutCallbackMessage -> [Element]
 printOutMessage' (OutMessage from to ct cont) =
   [ textTag "ToUserName" to

@@ -3,17 +3,22 @@ module Web.WeChat where
 
 import           Web.WeChat.Internal
 import           Web.WeChat.XMLParse
+import           Web.WeChat.XMLPrint
 
 import           Control.Monad.IO.Class
-import           Data.ByteString        (ByteString)
 import           Data.Monoid            ((<>))
-import           Text.XML.Light         (parseXMLDoc)
+import           Data.Text              (Text)
+import qualified Data.Text              as T
+import           Text.XML.Light
 import           Text.XML.Light.Lexer   (XmlSource)
 
 
 
 parseInMessage :: XmlSource s => s -> Maybe InMessage
 parseInMessage s = parseXMLDoc s >>= parseInMessage'
+
+printOutMessage :: OutCallbackMessage -> Text
+printOutMessage = T.pack . showElement . eltTag "xml" . printOutMessage'
 
 
 encodeMsg :: (MonadIO m, ToByteString a) => EncodeMsg a -> m (Either String EncodedMessage)

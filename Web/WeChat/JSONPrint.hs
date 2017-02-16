@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -fno-warn-orphans #-}
+
 module Web.WeChat.JSONPrint where
 
 import           Data.Aeson
@@ -8,7 +10,7 @@ import           Data.Maybe (maybeToList)
 import Web.WeChat.Types
 
 instance ToJSON OutCSMessage where
-  toJSON (OutCSMessage token to cont) = object $
+  toJSON (OutCSMessage _token to cont) = object $
     [ "touser" .= to ] ++
     outJSON cont
 

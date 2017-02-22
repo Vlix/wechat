@@ -25,6 +25,9 @@ stringTag lbl str = mkTag lbl [Text $ CData CDataVerbatim str Nothing]
 textTag :: T.Text -> T.Text -> Element
 textTag lbl txt = stringTag lbl (T.unpack txt)
 
+intTag :: (Show a, Integral a) => T.Text -> a -> Element
+intTag lbl i = mkTag lbl [Text $ CData CDataText (show i) Nothing]
+
 showTag :: Show a => T.Text -> a -> Element
 showTag lbl thing = stringTag lbl (show thing)
 
@@ -32,7 +35,7 @@ printOutMessage' :: OutCallbackMessage -> [Element]
 printOutMessage' (OutMessage from to ct cont) =
   [ textTag "ToUserName" to
   , textTag "FromUserName" from
-  , showTag "CreateTime" ct
+  , intTag "CreateTime" ct
   ] ++ printOutContent cont
 
 outXML :: T.Text -> [Element] -> [Element]
@@ -58,7 +61,7 @@ printOutContent (OutMusic mbTitle mbDescr mbURL mbHQURL mID) =
     mbTag (textTag "HQMusicUrl") mbHQURL ++
     [textTag "ThumbMediaId" mID]
 printOutContent (OutRich articles) = outXML "news" $
-  [showTag "ArticleCount" (length articles)] ++
+  [intTag "ArticleCount" (length articles)] ++
   map printOutArticle articles
 
 printOutArticle :: OutRichArticle -> Element

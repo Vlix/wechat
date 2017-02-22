@@ -3,7 +3,6 @@ module Web.WeChat.Types where
 
 import           Data.ByteString        (ByteString)
 import           Data.Text              (Text)
-import           Data.Time              (UTCTime)
 
 
 newtype EncodedMessage = Encoded { encMsg :: ByteString }
@@ -30,8 +29,12 @@ data DecodeMsg a = DecodeMsg
   , decodeMsgNonce     :: a
   }
 
-type MediaID = Text
 
+--------------
+-- INCOMING --
+--------------
+
+type MediaID = Text
 type URL = Text
 
 data InMessageContent
@@ -51,13 +54,25 @@ data InMessageContent
    | InSpeechRecognition { inMediaID :: MediaID, inFormat :: Text, inRecognition :: Text }
   deriving (Eq, Show)
 
-data InMessage = InMessage { inFrom       :: Text
-                           , inTo         :: Text
-                           , inCreateTime :: UTCTime
-                           , inContent    :: InMessageContent
-                           , inMsgId      :: Maybe Integer
-                           }
-  deriving (Eq, Show)
+data InMessage =
+  InMessage
+      { inFrom       :: Text
+      , inTo         :: Text
+      , inCreateTime :: Integer
+      , inContent    :: InMessageContent
+      , inMsgId      :: Maybe Integer
+      }
+  | InEncryptedMessage
+      { inEncrypt      :: Text
+      , inMsgSignature :: Text
+      , inTimeStamp    :: Integer
+      , inNonce        :: Text
+      } deriving (Eq, Show)
+
+
+--------------
+-- OUTGOING --
+--------------
 
 data OutMessageContent
    = OutText { outTextContent :: Text }
@@ -75,7 +90,7 @@ data OutRichArticle = OutRichArticle { outArticleTitle :: Maybe Text
 
 data OutCallbackMessage = OutMessage { outCbFrom       :: Text
                                      , outCbTo         :: Text
-                                     , outCbCreateTime :: UTCTime
+                                     , outCbCreateTime :: Integer
                                      , outCbContent    :: OutMessageContent
                                      }
 
@@ -83,3 +98,17 @@ data OutCSMessage = OutCSMessage { outCSTo          :: Text
                                  , outCSContent     :: OutMessageContent
                                  }
 
+
+---------------
+-- RESPONSES --
+---------------
+
+data ErrorResponse = ErrorResponse { errorCode :: Int, errorMsg :: Text, msgId :: Maybe Int }
+
+data MultimediaTransferResponse = MultimediaTransferResponse
+  { multimediaType    :: Text
+  , multimediaId      :: Text
+  , multimediaCreated :: Int
+  }
+
+data AccessTokenResponse = AccessTokenResponse { accessToken :: Text, accessTokenExpires :: Int }

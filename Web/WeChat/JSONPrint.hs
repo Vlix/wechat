@@ -3,7 +3,7 @@
 module Web.WeChat.JSONPrint where
 
 import           Data.Aeson
-import           Data.Aeson.Types (Pair)
+import           Data.Aeson.Types (Pair,typeMismatch)
 import qualified Data.Text as T
 import           Data.Maybe (maybeToList)
 
@@ -40,3 +40,22 @@ instance ToJSON OutRichArticle where
              mbJSON "url" mbURL ++
              mbJSON "picurl" mbPicURL
 
+instance FromJSON ErrorResponse where
+  parseJSON (Object o) =
+    ErrorResponse <$> o .: "errcode"
+                  <*> o .: "errmsg"
+                  <*> o .:? "msgid"
+  parseJSON wat = typeMismatch "ErrorResponse" wat
+
+instance FromJSON MultimediaTransferResponse where
+  parseJSON (Object o) =
+    MultimediaTransferResponse <$> o .: "type"
+                               <*> o .: "media_id"
+                               <*> o .: "created_at"
+  parseJSON wat = typeMismatch "MultimediaTransferResponse" wat
+
+instance FromJSON AccessTokenResponse where
+  parseJSON (Object o) =
+    AccessTokenResponse <$> o .: "access_token"
+                        <*> o .: "expires_in"
+  parseJSON wat = typeMismatch "AccessTokenResponse" wat

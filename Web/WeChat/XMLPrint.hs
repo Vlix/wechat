@@ -32,10 +32,8 @@ printOutMessage' :: OutCallbackMessage -> [Element]
 printOutMessage' (OutMessage from to ct cont) =
   [ textTag "ToUserName" to
   , textTag "FromUserName" from
-  , showTag "CreateTime" (dispTime ct)
+  , showTag "CreateTime" ct
   ] ++ printOutContent cont
-  where dispTime :: UTCTime -> Integer
-        dispTime = floor . utcTimeToPOSIXSeconds
 
 outXML :: T.Text -> [Element] -> [Element]
 outXML typ elts = textTag "MsgType" typ : elts

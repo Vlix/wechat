@@ -29,27 +29,37 @@ textTag txt elt = textContent <$> findChild (tag txt) elt
 readTag :: Read a => T.Text -> Element -> Maybe a
 readTag txt elt = readContent =<< findChild (tag txt) elt
 
+parseInEncryptedMessage :: Element -> Maybe InMessage
+parseInEncryptedMessage elt =
+  InEncryptedMessage <$> textTag "Encrypt" elt
+                     <*> textTag "MsgSignature" elt
+                     <*> (intContent =<< findChild (tag "TimeStamp") elt)
+                     <*> textTag "Nonce" elt
+
 parseInMessage' :: Element -> Maybe InMessage
-parseInMessage' elt = do
-  inFrom       <- textTag "FromUserName" elt
-  inTo         <- textTag "ToUserName" elt
-  inCreateTime <- (posixSecondsToUTCTime . realToFrac) <$> (intContent =<< findChild (tag "CreateTime") elt)
+parseInMessage' elt =
+  case parseInEncryptedMessage elt of
+    Just encrypted -> return encrypted
+    Nothing -> do
+      inFrom       <- textTag "FromUserName" elt
+      inTo         <- textTag "ToUserName" elt
+      inCreateTime <- intContent =<< findChild (tag "CreateTime") elt
 
-  -- If no tag, no biggie.            Just Nothing
-  -- If a tag but no parse, fail.     Nothing
-  -- If a tag and a parse, succeed.   Just (Just msgId)
-  inMsgId      <- case findChild (tag "MsgId") elt of
-                    Nothing -> return Nothing
-                    Just msgIdTag -> fmap Just $ intContent msgIdTag
+      -- If no tag, no biggie.            Just Nothing
+      -- If a tag but no parse, fail.     Nothing
+      -- If a tag and a parse, succeed.   Just (Just msgId)
+      inMsgId      <- case findChild (tag "MsgId") elt of
+                        Nothing -> return Nothing
+                        Just msgIdTag -> fmap Just $ intContent msgIdTag
 
-  msgType   <- T.toLower <$> textTag "MsgType" elt
-  case inMsgId of
-    Nothing -> guard (msgType == "event")
-    Just{}  -> return ()
+      msgType   <- T.toLower <$> textTag "MsgType" elt
+      case inMsgId of
+        Nothing -> guard (msgType == "event")
+        Just{}  -> return ()
 
-  inContent <- parseInMessageContent msgType elt
+      inContent <- parseInMessageContent msgType elt
 
-  return InMessage{..}
+      return InMessage{..}
 
 parseInMessageContent :: T.Text -> Element -> Maybe InMessageContent
 parseInMessageContent "event"    = parseEventMessage

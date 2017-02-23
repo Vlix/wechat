@@ -29,17 +29,17 @@ textTag txt elt = textContent <$> findChild (tag txt) elt
 readTag :: Read a => T.Text -> Element -> Maybe a
 readTag txt elt = readContent =<< findChild (tag txt) elt
 
-parseInEncryptedMessage :: Element -> Maybe InMessage
+parseInEncryptedMessage :: Element -> Maybe InEncryptedMessage
 parseInEncryptedMessage elt =
   InEncryptedMessage <$> textTag "Encrypt" elt
                      <*> textTag "MsgSignature" elt
                      <*> (intContent =<< findChild (tag "TimeStamp") elt)
                      <*> textTag "Nonce" elt
 
-parseInMessage' :: Element -> Maybe InMessage
+parseInMessage' :: Element -> Maybe (Either InEncryptedMessage InMessage)
 parseInMessage' elt =
   case parseInEncryptedMessage elt of
-    Just encrypted -> return encrypted
+    Just encrypted -> return $ Left encrypted
     Nothing -> do
       inFrom       <- textTag "FromUserName" elt
       inTo         <- textTag "ToUserName" elt
@@ -59,7 +59,7 @@ parseInMessage' elt =
 
       inContent <- parseInMessageContent msgType elt
 
-      return InMessage{..}
+      return $ Right InMessage{..}
 
 parseInMessageContent :: T.Text -> Element -> Maybe InMessageContent
 parseInMessageContent "event"    = parseEventMessage
@@ -110,7 +110,7 @@ parseEventMessage elt = do
   event <- textTag "Event" elt
   case T.toLower event of
     "subscribe"   -> parseEventSubscribe elt
-    "unsubscribe" -> return InEventUnsubscribe
+    "unsubscribe" -> return $ InEvent Unsubscribe
     "scan"        -> parseEventScan elt
     "location"    -> parseEventLocation elt
     "click"       -> parseEventClick elt
@@ -125,23 +125,22 @@ parseEventSubscribe,
 
 parseEventSubscribe elt = do
   case textTag "EventKey" elt of
-    Just inEventKey -> do
-      inTicket <- textTag "Ticket" elt
-      return InEventQRSubscribe{..}
-    Nothing -> return InEventSubscribe
+    Just eventKey -> do
+      eventTicket <- textTag "Ticket" elt
+      return $ InEvent QRSubscribe{..}
+    Nothing -> return $ InEvent Subscribe
 parseEventScan elt = do
-  inEventKey <- textTag "EventKey" elt
-  inTicket <- textTag "Ticket" elt
-  return InEventScan{..}
+  eventKey <- textTag "EventKey" elt
+  eventTicket <- textTag "Ticket" elt
+  return $ InEvent QRScan{..}
 parseEventLocation elt = do
-  inLat <- readTag "Latitude" elt
-  inLon <- readTag "Longitude" elt
-  inPrecision <- readTag "Precision" elt
-  return InEventLocation{..}
+  eventLat <- readTag "Latitude" elt
+  eventLon <- readTag "Longitude" elt
+  eventPrecision <- readTag "Precision" elt
+  return $ InEvent Location{..}
 parseEventClick elt = do
-  inEventKey <- textTag "EventKey" elt
-  return InEventClick{..}
+  eventKey <- textTag "EventKey" elt
+  return $ InEvent Click{..}
 parseEventRedirect elt = do
-  inEventKey <- textTag "EventKey" elt
-  return InEventRedirect{..}
-
+  eventKey <- textTag "EventKey" elt
+  return $ InEvent Redirect{..}

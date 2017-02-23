@@ -44,30 +44,34 @@ data InMessageContent
    | InVideo { inMediaID :: MediaID, inThumbMediaID :: MediaID }
    | InLocation { inLat :: Double, inLon :: Double, inScale :: Int, inLabel :: Text}
    | InLink { inTitle :: Text, inDescription :: Text, inUrl :: URL }
-   | InEventSubscribe
-   | InEventUnsubscribe
-   | InEventQRSubscribe { inEventKey :: Text, inTicket :: Text }
-   | InEventScan { inEventKey :: Text, inTicket :: Text }
-   | InEventLocation { inLat :: Double, inLon :: Double, inPrecision :: Double }
-   | InEventClick { inEventKey :: Text }
-   | InEventRedirect { inEventKey :: Text }
+   | InEvent {inEvent :: InEvent }
    | InSpeechRecognition { inMediaID :: MediaID, inFormat :: Text, inRecognition :: Text }
   deriving (Eq, Show)
 
-data InMessage =
-  InMessage
-      { inFrom       :: Text
-      , inTo         :: Text
-      , inCreateTime :: Integer
-      , inContent    :: InMessageContent
-      , inMsgId      :: Maybe Integer
-      }
-  | InEncryptedMessage
-      { inEncrypt      :: Text
-      , inMsgSignature :: Text
-      , inTimeStamp    :: Integer
-      , inNonce        :: Text
-      } deriving (Eq, Show)
+data InEvent
+  = Subscribe
+  | Unsubscribe
+  | QRSubscribe { eventKey :: Text, eventTicket :: Text }
+  | QRScan { eventKey :: Text, eventTicket :: Text }
+  | Location { eventLat :: Double, eventLon :: Double, eventPrecision :: Double }
+  | Click { eventKey :: Text }
+  | Redirect { eventKey :: Text }
+  deriving (Eq, Show)
+
+data InMessage = InMessage
+  { inFrom       :: Text
+  , inTo         :: Text
+  , inCreateTime :: Integer
+  , inContent    :: InMessageContent
+  , inMsgId      :: Maybe Integer
+  } deriving (Eq, Show)
+
+data InEncryptedMessage = InEncryptedMessage
+  { inEncrypt      :: Text
+  , inMsgSignature :: Text
+  , inTimeStamp    :: Integer
+  , inNonce        :: Text
+  } deriving (Eq, Show)
 
 
 --------------
@@ -75,17 +79,17 @@ data InMessage =
 --------------
 
 data OutMessageContent
-   = OutText { outTextContent :: Text }
+   = OutText  { outTextContent :: Text }
    | OutImage { outMediaID :: MediaID }
    | OutAudio { outMediaID :: MediaID }
    | OutVideo { outMediaID :: MediaID, outThumbMediaID :: MediaID }
    | OutMusic { outTitle :: Maybe Text, outDescription :: Maybe Text, outMusicURL :: Maybe URL, outHQMusicURL :: Maybe URL, outThumbMediaID :: MediaID }
-   | OutRich { outArticles :: [OutRichArticle] }
+   | OutRich  { outArticles :: [OutRichArticle] }
 
-data OutRichArticle = OutRichArticle { outArticleTitle :: Maybe Text
+data OutRichArticle = OutRichArticle { outArticleTitle       :: Maybe Text
                                      , outArticleDescription :: Maybe Text
-                                     , outPicURL :: Maybe URL
-                                     , outURL    :: Maybe URL
+                                     , outPicURL             :: Maybe URL
+                                     , outURL                :: Maybe URL
                                      }
 
 data OutCallbackMessage = OutMessage { outCbFrom       :: Text
@@ -103,7 +107,10 @@ data OutCSMessage = OutCSMessage { outCSTo          :: Text
 -- RESPONSES --
 ---------------
 
-data ErrorResponse = ErrorResponse { errorCode :: Int, errorMsg :: Text, msgId :: Maybe Int }
+data ErrorResponse = ErrorResponse { errorCode :: Int
+                                   , errorMsg  :: Text
+                                   , msgId     :: Maybe Int
+                                   }
 
 data MultimediaTransferResponse = MultimediaTransferResponse
   { multimediaType    :: Text

@@ -1,7 +1,15 @@
-module Web.WeChat where
+module Web.WeChat
+  ( module Web.WeChat.Types
+  , parseInMessage
+  , printOutMessage
+  , sha1VerifySignature
+  , encodeMsg
+  , decodeMsg
+  ) where
 
 
 import           Web.WeChat.Internal
+import           Web.WeChat.Types
 import           Web.WeChat.XMLParse
 import           Web.WeChat.XMLPrint
 
@@ -16,7 +24,7 @@ import           Text.XML.Light.Lexer   (XmlSource)
 
 
 
-parseInMessage :: XmlSource s => s -> Maybe InMessage
+parseInMessage :: XmlSource s => s -> Maybe (Either InEncryptedMessage InMessage)
 parseInMessage s = parseXMLDoc s >>= parseInMessage'
 
 printOutMessage :: OutCallbackMessage -> Text

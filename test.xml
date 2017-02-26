@@ -150,3 +150,32 @@
 <MsgId>1234567890123456</MsgId>
 </xml>
 
+<!-- Actual message -->
+<xml>
+<ToUserName><![CDATA[gh_261463ad81a6]]></ToUserName>
+<FromUserName><![CDATA[oO5uw0Q_69_lA-frq4G1Us9mlXKU]]></FromUserName>
+<CreateTime>1488148473</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[Hi]]></Content>
+<MsgId>6391549023543798470</MsgId>
+</xml>
+
+<!-- Subscribe event -->
+<xml>
+<ToUserName><![CDATA[gh_261463ad81a6]]></ToUserName>
+<FromUserName><![CDATA[oO5uw0Q_69_lA-frq4G1Us9mlXKU]]></FromUserName>
+<CreateTime>1488145223</CreateTime>
+<MsgType><![CDATA[event]]></MsgType>
+<Event><![CDATA[subscribe]]></Event>
+<EventKey><![CDATA[]]></EventKey>
+</xml>
+
+<!-- Unsubscribe event -->
+<xml>
+<ToUserName><![CDATA[gh_261463ad81a6]]></ToUserName>
+<FromUserName><![CDATA[oO5uw0Q_69_lA-frq4G1Us9mlXKU]]></FromUserName>
+<CreateTime>1488145156</CreateTime>
+<MsgType><![CDATA[event]]></MsgType>
+<Event><![CDATA[unsubscribe]]></Event>
+<EventKey><![CDATA[]]></EventKey>
+</xml>

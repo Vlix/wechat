@@ -125,10 +125,11 @@ parseEventSubscribe,
 
 parseEventSubscribe elt = do
   case textTag "EventKey" elt of
+    Nothing -> return $ InEvent Subscribe
+    Just "" -> return $ InEvent Subscribe
     Just eventKey -> do
       eventTicket <- textTag "Ticket" elt
       return $ InEvent QRSubscribe{..}
-    Nothing -> return $ InEvent Subscribe
 parseEventScan elt = do
   eventKey <- textTag "EventKey" elt
   eventTicket <- textTag "Ticket" elt

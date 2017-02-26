@@ -56,7 +56,7 @@ data InEvent
   | Location { eventLat :: Double, eventLon :: Double, eventPrecision :: Double }
   | Click { eventKey :: Text }
   | Redirect { eventKey :: Text }
-  deriving (Eq, Show)
+  deriving (Eq, Show, Read)
 
 data InMessage = InMessage
   { inFrom       :: Text

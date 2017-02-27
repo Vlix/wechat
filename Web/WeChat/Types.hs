@@ -1,6 +1,7 @@
 module Web.WeChat.Types where
 
 
+import           Data.Aeson
 import           Data.ByteString        (ByteString)
 import           Data.Text              (Text)
 
@@ -119,3 +120,21 @@ data MultimediaTransferResponse = MultimediaTransferResponse
   }
 
 data AccessTokenResponse = AccessTokenResponse { accessToken :: Text, accessTokenExpires :: Int }
+
+
+instance FromJSON ErrorResponse where
+  parseJSON = withObject "ErrorResponse" $ \o ->
+    ErrorResponse <$> o .: "errcode"
+                  <*> o .: "errmsg"
+                  <*> o .:? "msgid"
+
+instance FromJSON MultimediaTransferResponse where
+  parseJSON = withObject "MultimediaTransferResponse" $ \o ->
+    MultimediaTransferResponse <$> o .: "type"
+                               <*> o .: "media_id"
+                               <*> o .: "created_at"
+
+instance FromJSON AccessTokenResponse where
+  parseJSON = withObject "AccessTokenResponse" $ \o ->
+    AccessTokenResponse <$> o .: "access_token"
+                        <*> o .: "expires_in"

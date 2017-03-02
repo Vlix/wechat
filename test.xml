@@ -170,6 +170,28 @@
 <EventKey><![CDATA[]]></EventKey>
 </xml>
 
+<!-- Subscribe event from (custom) QR scan -->
+<xml>
+<ToUserName><![CDATA[gh_261463ad81a6]]></ToUserName>
+<FromUserName><![CDATA[oO5uw0Q_69_lA-frq4G1Us9mlXKU]]></FromUserName>
+<CreateTime>1488489177</CreateTime>
+<MsgType><![CDATA[event]]></MsgType>
+<Event><![CDATA[subscribe]]></Event>
+<EventKey><![CDATA[qrscene_customText]]></EventKey>
+<Ticket><![CDATA[gQHg8DwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAydzREWXhzWHJlTWgxMDAwMDAwN1QAAgTMerhYAwQAAAAA]]></Ticket>
+</xml>
+
+<!-- QR scan when already following -->
+<xml>
+<ToUserName><![CDATA[gh_261463ad81a6]]></ToUserName>
+<FromUserName><![CDATA[oO5uw0Q_69_lA-frq4G1Us9mlXKU]]></FromUserName>
+<CreateTime>1488489185</CreateTime>
+<MsgType><![CDATA[event]]></MsgType>
+<Event><![CDATA[SCAN]]></Event>
+<EventKey><![CDATA[customText]]></EventKey>
+<Ticket><![CDATA[gQHg8DwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAydzREWXhzWHJlTWgxMDAwMDAwN1QAAgTMerhYAwQAAAAA]]></Ticket>
+</xml>
+
 <!-- Unsubscribe event -->
 <xml>
 <ToUserName><![CDATA[gh_261463ad81a6]]></ToUserName>
@@ -178,4 +200,154 @@
 <MsgType><![CDATA[event]]></MsgType>
 <Event><![CDATA[unsubscribe]]></Event>
 <EventKey><![CDATA[]]></EventKey>
+</xml>
+
+<!-- Click on menu item -->
+<xml>
+<ToUserName><![CDATA[gh_261463ad81a6]]></ToUserName>
+<FromUserName><![CDATA[oO5uw0Q_69_lA-frq4G1Us9mlXKU]]></FromUserName>
+<CreateTime>1488488627</CreateTime>
+<MsgType><![CDATA[event]]></MsgType>
+<Event><![CDATA[CLICK]]></Event>
+<EventKey><![CDATA[DailySongKey]]></EventKey>
+</xml>
+
+<!-- Click on url-menu item -->
+<xml>
+<ToUserName><![CDATA[gh_261463ad81a6]]></ToUserName>
+<FromUserName><![CDATA[oO5uw0Q_69_lA-frq4G1Us9mlXKU]]></FromUserName>
+<CreateTime>1488488637</CreateTime>
+<MsgType><![CDATA[event]]></MsgType>
+<Event><![CDATA[VIEW]]></Event>
+<EventKey><![CDATA[http://www.google.com/]]></EventKey>
+<MenuId>416638930</MenuId>
+</xml>
+
+<!-- Scanned QR with scancode_push-menu item -->
+<xml>
+<ToUserName><![CDATA[gh_261463ad81a6]]></ToUserName>
+<FromUserName><![CDATA[oO5uw0Q_69_lA-frq4G1Us9mlXKU]]></FromUserName>
+<CreateTime>1488489185</CreateTime>
+<MsgType><![CDATA[event]]></MsgType>
+<Event><![CDATA[scancode_push]]></Event>
+<EventKey><![CDATA[blabla]]></EventKey>
+<ScanCodeInfo>
+  <ScanType><![CDATA[qrcode]]></ScanType>
+  <ScanResult><![CDATA[http://weixin.qq.com/q/02w4DYxsXreMh10000007T]]></ScanResult>
+</ScanCodeInfo>
+</xml>
+
+<!-- Scanned QR with scancode_waitmsg-menu item -->
+<xml>
+<ToUserName><![CDATA[gh_261463ad81a6]]></ToUserName>
+<FromUserName><![CDATA[oO5uw0Q_69_lA-frq4G1Us9mlXKU]]></FromUserName>
+<CreateTime>1488489918</CreateTime>
+<MsgType><![CDATA[event]]></MsgType>
+<Event><![CDATA[scancode_waitmsg]]></Event>
+<EventKey><![CDATA[waitKey]]></EventKey>
+<ScanCodeInfo>
+  <ScanType><![CDATA[qrcode]]></ScanType>
+  <ScanResult><![CDATA[http://weixin.qq.com/q/02w4DYxsXreMh10000007T]]></ScanResult>
+</ScanCodeInfo>
+</xml>
+
+<!-- Sent pic with camera through pic_sysphoto menu item -->
+<xml>
+<ToUserName><![CDATA[gh_261463ad81a6]]></ToUserName>
+<FromUserName><![CDATA[oO5uw0Q_69_lA-frq4G1Us9mlXKU]]></FromUserName>
+<CreateTime>1488490118</CreateTime>
+<MsgType><![CDATA[event]]></MsgType>
+<Event><![CDATA[pic_sysphoto]]></Event>
+<EventKey><![CDATA[picKeySys]]></EventKey>
+<SendPicsInfo>
+  <Count>1</Count>
+  <PicList>
+    <item>
+      <PicMd5Sum><![CDATA[5e309eaf0c1646cf592dfb63b8ecaeeb]]></PicMd5Sum>
+    </item>
+  </PicList>
+</SendPicsInfo>
+</xml>
+
+<!-- Received picture (after using pic_sysphoto menu item) -->
+<xml>
+<ToUserName><![CDATA[gh_261463ad81a6]]></ToUserName>
+<FromUserName><![CDATA[oO5uw0Q_69_lA-frq4G1Us9mlXKU]]></FromUserName>
+<CreateTime>1488490118</CreateTime>
+<MsgType><![CDATA[image]]></MsgType>
+<PicUrl><![CDATA[http://mmbiz.qpic.cn/mmbiz_jpg/1OWlMgrFjIjvBCaeRwqWzh6UdAJBbXicjS8q0uNMjPsFMoEI4ljyd8ZLzx4L7muiaaa3hzJkWYCUmqeOK0iawFltg/0]]></PicUrl>
+<MsgId>6393016377645819905</MsgId>
+<MediaId><![CDATA[9R18iRXWFDPtnDYlYwXmnfcfwkutTUaV9iaIxakLxl-nC6MWaPbELug4SlmePqhg]]></MediaId>
+</xml>
+
+<!-- Sent pic with camera through pic_photo_or_album menu item -->
+<xml>
+<ToUserName><![CDATA[gh_261463ad81a6]]></ToUserName>
+<FromUserName><![CDATA[oO5uw0Q_69_lA-frq4G1Us9mlXKU]]></FromUserName>
+<CreateTime>1488490415</CreateTime>
+<MsgType><![CDATA[event]]></MsgType>
+<Event><![CDATA[pic_photo_or_album]]></Event>
+<EventKey><![CDATA[picKeyFile]]></EventKey>
+<SendPicsInfo><Count>1</Count>
+  <PicList>
+    <item>
+      <PicMd5Sum><![CDATA[5cd0403da795165165e793e8ce9528ee]]></PicMd5Sum>
+    </item>
+  </PicList>
+</SendPicsInfo>
+</xml>
+
+<!-- Sent pic with camera through pic_weixin menu item -->
+<xml>
+<ToUserName><![CDATA[gh_261463ad81a6]]></ToUserName>
+<FromUserName><![CDATA[oO5uw0Q_69_lA-frq4G1Us9mlXKU]]></FromUserName>
+<CreateTime>1488491144</CreateTime>
+<MsgType><![CDATA[event]]></MsgType>
+<Event><![CDATA[pic_weixin]]></Event>
+<EventKey><![CDATA[KEYFORBACKEND]]></EventKey>
+<SendPicsInfo>
+  <Count>3</Count> <!-- maximum of 9 -->
+  <PicList>
+    <item>
+      <PicMd5Sum><![CDATA[5cd0403da795165165e793e8ce9528ee]]></PicMd5Sum>
+    </item>
+    <item>
+      <PicMd5Sum><![CDATA[5e309eaf0c1646cf592dfb63b8ecaeeb]]></PicMd5Sum>
+    </item>
+    <item>
+      <PicMd5Sum><![CDATA[e477dd6e272289d1c24a50dfdc45b01a]]></PicMd5Sum>
+    </item>
+  </PicList>
+</SendPicsInfo>
+</xml>
+
+<!-- Location menu item used (causes 2 requests received)-->
+<!-- This is probably the msg sent to the channel-->
+<xml>
+<ToUserName><![CDATA[gh_261463ad81a6]]></ToUserName>
+<FromUserName><![CDATA[oO5uw0Q_69_lA-frq4G1Us9mlXKU]]></FromUserName>
+<CreateTime>1488491304</CreateTime>
+<MsgType><![CDATA[location]]></MsgType>
+<Location_X>52.167439</Location_X>
+<Location_Y>4.482139</Location_Y>
+<Scale>17</Scale>
+<Label><![CDATA[Bargelaan 10, 2333 CT Leiden, Netherlands]]></Label>
+<MsgId>6393021471477033013</MsgId>
+</xml>
+
+<!-- This is probably specifically for the backend -->
+<xml>
+<ToUserName><![CDATA[gh_261463ad81a6]]></ToUserName>
+<FromUserName><![CDATA[oO5uw0Q_69_lA-frq4G1Us9mlXKU]]></FromUserName>
+<CreateTime>1488491304</CreateTime>
+<MsgType><![CDATA[event]]></MsgType>
+<Event><![CDATA[location_select]]></Event>
+<EventKey><![CDATA[BackendKey]]></EventKey>
+<SendLocationInfo>
+  <Location_X><![CDATA[52.16743850708008]]></Location_X>
+  <Location_Y><![CDATA[4.4821391105651855]]></Location_Y>
+  <Scale><![CDATA[17]]></Scale>
+  <Label><![CDATA[Bargelaan 10, 2333 CT Leiden, Netherlands]]></Label>
+  <Poiname><![CDATA[[Location]]]></Poiname>
+</SendLocationInfo>
 </xml>

@@ -53,10 +53,10 @@ data InEvent
   = Subscribe
   | Unsubscribe
   | QRSubscribe { eventKey :: Text, eventTicket :: Text }
-  | QRScan { eventKey :: Text, eventTicket :: Text }
-  | Location { eventLat :: Double, eventLon :: Double, eventPrecision :: Double }
-  | Click { eventKey :: Text }
-  | Redirect { eventKey :: Text }
+  | QRScan      { eventKey :: Text, eventTicket :: Text }
+  | Location    { eventLat :: Double, eventLon :: Double, eventPrecision :: Double }
+  | Click       { eventKey :: Text }
+  | Redirect    { eventKey :: Text }
   deriving (Eq, Show, Read)
 
 data InMessage = InMessage

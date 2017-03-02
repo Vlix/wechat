@@ -1,11 +1,12 @@
 module Web.WeChat.XMLParse where
  
-import           Control.Monad (guard)
+import           Control.Monad          (guard)
 
-import qualified Data.Text as T
-import           Data.Time.Clock.POSIX (posixSecondsToUTCTime)
+import           Data.Maybe             (fromMaybe)
+import qualified Data.Text              as T
+import           Data.Time.Clock.POSIX  (posixSecondsToUTCTime)
 
-import           Text.Read (readMaybe)
+import           Text.Read              (readMaybe)
 import           Text.XML.Light
 
 import           Web.WeChat.Types
@@ -115,6 +116,12 @@ parseEventMessage elt = do
     "location"    -> parseEventLocation elt
     "click"       -> parseEventClick elt
     "view"        -> parseEventRedirect elt
+    -- "scancode_push"      <-- makes user go to website or makes it show text in a different window (like when scanning QR outside of wechat, kindof)
+    -- "scancode_waitmsg"   <-- only sends to backend for backend to react to
+    -- "pic_sysphoto"       <-- Let user take and send picture with camera
+    -- "pic_photo_or_album" <-- Let user take and send picture with camera or send pic from album
+    -- "pic_weixin"         <-- Let user send pic from album
+    -- "location_select"    <-- Ask user for coordinates
     _             -> Nothing
 
 parseEventSubscribe,
@@ -127,8 +134,9 @@ parseEventSubscribe elt = do
   case textTag "EventKey" elt of
     Nothing -> return $ InEvent Subscribe
     Just "" -> return $ InEvent Subscribe
-    Just eventKey -> do
+    Just key -> do
       eventTicket <- textTag "Ticket" elt
+      let eventKey = fromMaybe key $ T.stripPrefix "qrscene_" key
       return $ InEvent QRSubscribe{..}
 parseEventScan elt = do
   eventKey <- textTag "EventKey" elt
@@ -145,3 +153,4 @@ parseEventClick elt = do
 parseEventRedirect elt = do
   eventKey <- textTag "EventKey" elt
   return $ InEvent Redirect{..}
+-- VIEW also gets a <MenuId></MenuId> tag when clicked from the menu... needed, yes/no?

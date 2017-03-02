@@ -81,27 +81,35 @@ data InEncryptedMessage = InEncryptedMessage
 
 data OutMessageContent
    = OutText  { outTextContent :: Text }
-   | OutImage { outMediaID :: MediaID }
-   | OutAudio { outMediaID :: MediaID }
-   | OutVideo { outMediaID :: MediaID, outThumbMediaID :: MediaID }
-   | OutMusic { outTitle :: Maybe Text, outDescription :: Maybe Text, outMusicURL :: Maybe URL, outHQMusicURL :: Maybe URL, outThumbMediaID :: MediaID }
-   | OutRich  { outArticles :: [OutRichArticle] }
+   | OutImage { outMediaID     :: MediaID }
+   | OutAudio { outMediaID     :: MediaID }
+   | OutVideo { outMediaID     :: MediaID, outThumbMediaID :: MediaID }
+   | OutMusic { outTitle        :: Maybe Text
+              , outDescription  :: Maybe Text
+              , outMusicURL     :: Maybe URL
+              , outHQMusicURL   :: Maybe URL
+              , outThumbMediaID :: MediaID }
+   | OutRich  { outArticles     :: [OutRichArticle] }
+  deriving (Eq, Show)
 
 data OutRichArticle = OutRichArticle { outArticleTitle       :: Maybe Text
                                      , outArticleDescription :: Maybe Text
                                      , outPicURL             :: Maybe URL
                                      , outURL                :: Maybe URL
                                      }
+  deriving (Eq, Show)
 
 data OutCallbackMessage = OutMessage { outCbFrom       :: Text
                                      , outCbTo         :: Text
                                      , outCbCreateTime :: Integer
                                      , outCbContent    :: OutMessageContent
                                      }
+  deriving (Eq, Show)
 
-data OutCSMessage = OutCSMessage { outCSTo          :: Text
-                                 , outCSContent     :: OutMessageContent
+data OutCSMessage = OutCSMessage { outCSTo      :: Text
+                                 , outCSContent :: OutMessageContent
                                  }
+  deriving (Eq, Show)
 
 
 ---------------

@@ -2,8 +2,6 @@ module Web.WeChat.XMLPrint where
 
 import           Data.Maybe (maybeToList)
 import qualified Data.Text as T
-import           Data.Time (UTCTime)
-import           Data.Time.Clock.POSIX (utcTimeToPOSIXSeconds)
 
 import           Text.XML.Light
 

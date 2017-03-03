@@ -288,7 +288,8 @@
 <MsgType><![CDATA[event]]></MsgType>
 <Event><![CDATA[pic_photo_or_album]]></Event>
 <EventKey><![CDATA[picKeyFile]]></EventKey>
-<SendPicsInfo><Count>1</Count>
+<SendPicsInfo>
+  <Count>1</Count>
   <PicList>
     <item>
       <PicMd5Sum><![CDATA[5cd0403da795165165e793e8ce9528ee]]></PicMd5Sum>

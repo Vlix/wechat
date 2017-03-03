@@ -5,7 +5,6 @@ import Control.Monad (zipWithM_)
 import Text.XML.Light
 
 import Web.WeChat.XMLParse
-import Web.WeChat.Types
 
 test :: IO ()
 test = do

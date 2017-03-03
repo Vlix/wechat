@@ -1,6 +1,5 @@
 module Web.WeChat
   ( module Web.WeChat.Types
-  , module Web.WeChat.JSONPrint
   , parseInMessage
   , printOutMessage
   , sha1VerifySignature

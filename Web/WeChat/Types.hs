@@ -39,24 +39,35 @@ type MediaID = Text
 type URL = Text
 
 data InMessageContent
-   = InText { inTextContent :: Text }
+   = InText  { inTextContent :: Text }
    | InImage { inPicURL :: URL, inMediaID :: MediaID }
    | InAudio { inMediaID :: MediaID, inFormat :: Text }
    | InVideo { inMediaID :: MediaID, inThumbMediaID :: MediaID }
    | InLocation { inLat :: Double, inLon :: Double, inScale :: Int, inLabel :: Text}
-   | InLink { inTitle :: Text, inDescription :: Text, inUrl :: URL }
-   | InEvent {inEvent :: InEvent }
+   | InLink  { inTitle :: Text, inDescription :: Text, inUrl :: URL }
+   | InEvent { inEvent :: InEvent }
    | InSpeechRecognition { inMediaID :: MediaID, inFormat :: Text, inRecognition :: Text }
   deriving (Eq, Show)
 
 data InEvent
   = Subscribe
   | Unsubscribe
-  | QRSubscribe { eventKey :: Text, eventTicket :: Text }
-  | QRScan      { eventKey :: Text, eventTicket :: Text }
-  | Location    { eventLat :: Double, eventLon :: Double, eventPrecision :: Double }
+  | QRSubscribe { eventKey :: Text, eventTicket :: Text } -- QR scanned outside of channel X directed towards channel X (combined with Subscribe)
+  | QRScan      { eventKey :: Text, eventTicket :: Text } -- QR scanned outside of channel X directed towards channel X
+  | QRScanPush  { eventKey :: Text, eventResult :: Text } -- QR scanned inside of channel (through Menu button) and forward to site or show text
+  | QRScanWait  { eventKey :: Text, eventResult :: Text } -- QR scanned inside of channel (through Menu button) and wait for backend to do something
+  | PicSysPhoto     { eventKey :: Text, eventCount :: Int, eventPicList :: [Text] } -- Picture(s) sent to channel from menu button (from camera)
+  | PicPhotoOrAlbum { eventKey :: Text, eventCount :: Int, eventPicList :: [Text] } -- Picture(s) sent to channel from menu button (from camera or album)
+  | PicWeixin       { eventKey :: Text, eventCount :: Int, eventPicList :: [Text] } -- Picture(s) sent to channel from menu button (from album)
+  | LocationSelect  { eventKey     :: Text
+                    , eventLat     :: Double
+                    , eventLon     :: Double
+                    , eventScale   :: Int
+                    , eventLabel   :: Text
+                    , eventPOIName :: Maybe Text } -- Location sent to channel from menu button
   | Click       { eventKey :: Text }
-  | Redirect    { eventKey :: Text }
+  | Redirect    { eventKey :: Text, eventMenuId :: Maybe Integer }
+  | Location    { eventLat :: Double, eventLon :: Double, eventPrecision :: Double }
   deriving (Eq, Show, Read)
 
 data InMessage = InMessage

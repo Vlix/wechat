@@ -3,8 +3,8 @@ module Web.WeChat.XMLParse where
 import           Control.Monad          (guard)
 
 import           Data.Maybe             (fromMaybe)
+import           Data.Text              (Text)
 import qualified Data.Text              as T
-import           Data.Time.Clock.POSIX  (posixSecondsToUTCTime)
 
 import           Text.Read              (readMaybe)
 import           Text.XML.Light
@@ -12,11 +12,11 @@ import           Text.XML.Light
 import           Web.WeChat.Types
 
 
-textContent :: Element -> T.Text
+textContent :: Element -> Text
 textContent = T.pack . strContent
 
-tag :: T.Text -> QName
-tag txt = unqual (T.unpack txt)
+tag :: Text -> QName
+tag = unqual . T.unpack
 
 readContent :: Read a => Element -> Maybe a
 readContent = readMaybe . strContent
@@ -24,17 +24,17 @@ readContent = readMaybe . strContent
 intContent :: Element -> Maybe Integer
 intContent = readContent
 
-textTag :: T.Text -> Element -> Maybe T.Text
-textTag txt elt = textContent <$> findChild (tag txt) elt
+textTag :: Text -> Element -> Maybe Text
+textTag txt = fmap textContent . findChild (tag txt)
 
-readTag :: Read a => T.Text -> Element -> Maybe a
-readTag txt elt = readContent =<< findChild (tag txt) elt
+readTag :: Read a => Text -> Element -> Maybe a
+readTag txt = (>>= readContent) . findChild (tag txt)
 
 parseInEncryptedMessage :: Element -> Maybe InEncryptedMessage
 parseInEncryptedMessage elt =
   InEncryptedMessage <$> textTag "Encrypt" elt
                      <*> textTag "MsgSignature" elt
-                     <*> (intContent =<< findChild (tag "TimeStamp") elt)
+                     <*> (readTag "TimeStamp" elt :: Maybe Integer)
                      <*> textTag "Nonce" elt
 
 parseInMessage' :: Element -> Maybe (Either InEncryptedMessage InMessage)
@@ -62,7 +62,7 @@ parseInMessage' elt =
 
       return $ Right InMessage{..}
 
-parseInMessageContent :: T.Text -> Element -> Maybe InMessageContent
+parseInMessageContent :: Text -> Element -> Maybe InMessageContent
 parseInMessageContent "event"    = parseEventMessage
 parseInMessageContent "text"     = parseTextMessage
 parseInMessageContent "image"    = parseImageMessage
@@ -116,17 +116,21 @@ parseEventMessage elt = do
     "location"    -> parseEventLocation elt
     "click"       -> parseEventClick elt
     "view"        -> parseEventRedirect elt
-    -- "scancode_push"      <-- makes user go to website or makes it show text in a different window (like when scanning QR outside of wechat, kindof)
-    -- "scancode_waitmsg"   <-- only sends to backend for backend to react to
-    -- "pic_sysphoto"       <-- Let user take and send picture with camera
-    -- "pic_photo_or_album" <-- Let user take and send picture with camera or send pic from album
-    -- "pic_weixin"         <-- Let user send pic from album
-    -- "location_select"    <-- Ask user for coordinates
-    _             -> Nothing
+    "scancode_push"    -> parseEventScanOther QRScanPush elt -- makes user go to website or makes it show text in a different window (like when scanning QR outside of wechat, kindof)
+    "scancode_waitmsg" -> parseEventScanOther QRScanWait elt -- only sends to backend for backend to react to
+    "pic_sysphoto"       -> parseEventPicOther PicSysPhoto elt     -- Let user take and send picture with camera
+    "pic_photo_or_album" -> parseEventPicOther PicPhotoOrAlbum elt -- Let user take and send picture with camera or send pic from album
+    "pic_weixin"         -> parseEventPicOther PicWeixin elt       -- Let user send pic from album
+    "location_select"    -> parseEventLocationSelect elt -- Ask user for coordinates
+    _ -> Nothing
+
+parseEventScanOther :: (Text -> Text -> InEvent) -> Element -> Maybe InMessageContent
+parseEventPicOther  :: (Text -> Int -> [Text] -> InEvent) -> Element -> Maybe InMessageContent
 
 parseEventSubscribe,
   parseEventScan,
   parseEventLocation,
+  parseEventLocationSelect,
   parseEventClick,
   parseEventRedirect :: Element -> Maybe InMessageContent
 
@@ -139,9 +143,28 @@ parseEventSubscribe elt = do
       let eventKey = fromMaybe key $ T.stripPrefix "qrscene_" key
       return $ InEvent QRSubscribe{..}
 parseEventScan elt = do
-  eventKey <- textTag "EventKey" elt
+  eventKey    <- textTag "EventKey" elt
   eventTicket <- textTag "Ticket" elt
   return $ InEvent QRScan{..}
+parseEventScanOther dataType elt = do
+  eventKey    <- textTag "EventKey" elt
+  eventResult <- textTag "ScanResult" =<< findChild (tag "ScanCodeInfo") elt
+  return $ InEvent $ dataType eventKey eventResult
+parseEventPicOther dataType elt = do
+  eventKey    <- textTag "EventKey" elt
+  spiElt      <- findChild (tag "SendPicsInfo") elt
+  eventCount  <- readTag "Count" spiElt :: Maybe Int
+  eventPicList <- mapM (textTag "PicMd5Sum") . findChildren (tag "item") =<< findChild (tag "PicList") spiElt
+  return $ InEvent $ dataType eventKey eventCount eventPicList
+parseEventLocationSelect elt = do
+  eventKey     <- textTag "EventKey" elt
+  sliElt       <- findChild (tag "SendLocationInfo") elt
+  eventLat     <- readTag "Location_X" sliElt
+  eventLon     <- readTag "Location_Y" sliElt
+  eventScale   <- readTag "Scale" sliElt
+  eventLabel   <- textTag "Label" sliElt -- Address most of the time (at least in NL)
+  let eventPOIName = textTag "Poiname" sliElt -- Name of POI or "[Location]"
+  return $ InEvent LocationSelect{..}
 parseEventLocation elt = do
   eventLat <- readTag "Latitude" elt
   eventLon <- readTag "Longitude" elt
@@ -152,5 +175,6 @@ parseEventClick elt = do
   return $ InEvent Click{..}
 parseEventRedirect elt = do
   eventKey <- textTag "EventKey" elt
+  let eventMenuId = readTag "MenuId" elt :: Maybe Integer
   return $ InEvent Redirect{..}
 -- VIEW also gets a <MenuId></MenuId> tag when clicked from the menu... needed, yes/no?

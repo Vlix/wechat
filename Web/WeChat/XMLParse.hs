@@ -33,9 +33,7 @@ readTag txt = (>>= readContent) . findChild (tag txt)
 parseInEncryptedMessage :: Element -> Maybe InEncryptedMessage
 parseInEncryptedMessage elt =
   InEncryptedMessage <$> textTag "Encrypt" elt
-                     <*> textTag "MsgSignature" elt
-                     <*> (readTag "TimeStamp" elt :: Maybe Integer)
-                     <*> textTag "Nonce" elt
+                     <*> textTag "ToUserName" elt
 
 parseInMessage' :: Element -> Maybe (Either InEncryptedMessage InMessage)
 parseInMessage' elt =

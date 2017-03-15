@@ -79,10 +79,8 @@ data InMessage = InMessage
   } deriving (Eq, Show)
 
 data InEncryptedMessage = InEncryptedMessage
-  { inEncrypt      :: Text
-  , inMsgSignature :: Text
-  , inTimeStamp    :: Integer
-  , inNonce        :: Text
+  { inEncrypt :: Text
+  , inEncTo   :: Text
   } deriving (Eq, Show)
 
 
@@ -138,6 +136,11 @@ data MultimediaTransferResponse = MultimediaTransferResponse
   , multimediaCreated :: Int
   }
 
+data MultimediaPermanentTransferResponse = MultimediaPermanentTransferResponse
+  { multimedia_perm_id  :: Text
+  , multimedia_perm_url :: Text
+  }
+
 data AccessTokenResponse = AccessTokenResponse { accessToken :: Text, accessTokenExpires :: Int }
 
 
@@ -152,6 +155,11 @@ instance FromJSON MultimediaTransferResponse where
     MultimediaTransferResponse <$> o .: "type"
                                <*> o .: "media_id"
                                <*> o .: "created_at"
+
+instance FromJSON MultimediaPermanentTransferResponse where
+  parseJSON = withObject "MultimediaPermanentTransferResponse" $ \o ->
+    MultimediaPermanentTransferResponse <$> o .: "media_id"
+                                        <*> o .: "url"
 
 instance FromJSON AccessTokenResponse where
   parseJSON = withObject "AccessTokenResponse" $ \o ->

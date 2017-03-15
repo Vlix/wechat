@@ -58,11 +58,11 @@ decryptMsg :: Monad m => ByteString -> ByteString -> ByteString -> m (Either Str
 decryptMsg aeskey encrypted appid =
   either (return . Left) continueDecryption $ makeAESIVfromB64 aeskey
  where
+  b64DecodedEncrypt = B64.decode encrypted
   continueDecryption (aes,iv) =
-    case cipherInit aes of
-      CryptoFailed err -> return $ Left $ "IllegalAesKey: encryptMsg failed to make AES key: " <> show err
-      CryptoPassed key -> do
-        let decrypted = cbcDecrypt key iv encrypted
+    case (cipherInit aes,b64DecodedEncrypt) of
+      (CryptoPassed key,Right decodedEncrypt) -> do
+        let decrypted = cbcDecrypt key iv decodedEncrypt
         case unpadPKCS7 decrypted of
           Nothing -> return $ Left "PKCS7ParseError: decryptMsg failed to unpad the decrypted message"
           Just unpadded -> do
@@ -76,18 +76,23 @@ decryptMsg aeskey encrypted appid =
                 if appIdToVerify /= appid
                   then return $ Left "ValidateAppidError: decryptMsg failed to verify validity of provided AppID"
                   else return $ Right content
+      (CryptoFailed err,_) -> return $ Left $ "IllegalAesKey: encryptMsg failed to make AES key: " <> show err
+      (_,Left err) -> return $ Left $ "Base64DecodeError: could not decode encrypted message from base64: " <> show err
    where
     word8ToInt :: [Word8] -> Maybe Int
     word8ToInt (a:b:c:d:[]) = go $ fmap fromIntegral [a,b,c,d]
      where
-      go (a':b':c':d':[]) = Just $ (a' * 16 ^ (3 :: Int)) + (b' * 16 ^ (2 :: Int)) + (c' * 16) + d'
+      go (a':b':c':d':[]) = Just $ (a' * 256 ^ (3 :: Int))
+                                 + (b' * 256 ^ (2 :: Int))
+                                 + (c' * 256)
+                                 + d'
       go _ = Nothing
     word8ToInt _ = Nothing
 
 mkVerifySignature :: ToByteString a => [a] -> Digest SHA1
 mkVerifySignature = hash . mconcat . sort . fmap toByteString
 
-makeAESIVfromB64 :: ByteString -> Either String (ByteString,IV AES128)
+makeAESIVfromB64 :: ByteString -> Either String (ByteString,IV AES256)
 makeAESIVfromB64 aeskey =
   either (const $ Left decodeB64Error) getIV decodedAES
  where
@@ -95,7 +100,7 @@ makeAESIVfromB64 aeskey =
   getIV validAESkey = maybe (Left encryptError) (Right . (,) validAESkey) $ mkIV validAESkey
   decodeB64Error = "DecodeBase64Error: encryptMsg failed to decode (AESkey + =)"
   encryptError   = "EncryptAESError: encryptMsg failed to makeIV of decoded Base64 decoded AESkey"
-  mkIV :: ByteString -> Maybe (IV AES128)
+  mkIV :: ByteString -> Maybe (IV AES256)
   mkIV = makeIV . BS.take 16
 
 padPKCS7 :: ByteString -> ByteString

@@ -43,7 +43,7 @@ encodeMsg EncodeMsg{..} =
       case encrypted of
         Left err  -> return $ Left err
         Right enc -> do
-          let sha1sig   = sha1VerifySignature [token,timeStamp,nonce]
+          let sha1sig   = sha1VerifySignature [token,timeStamp,nonce,enc]
               encodedMessage = "<xml>"
                             <> "<Encrypt><![CDATA[" <> enc <> "]]></Encrypt>"
                             <> "<MsgSignature><![CDATA[" <> sha1sig <> "]]></MsgSignature>"

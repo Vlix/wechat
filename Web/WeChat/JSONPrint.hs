@@ -24,7 +24,7 @@ outJSON :: OutMessageContent -> [Pair]
 outJSON (OutText cont) = mediaJSON "text" ["content" .= cont]
 outJSON (OutImage mId) = mediaJSON "image" ["media_id" .= mId]
 outJSON (OutAudio mId) = mediaJSON "voice" ["media_id" .= mId]
-outJSON (OutVideo mId thMId) = mediaJSON "video" ["media_id" .= mId, "thumb_media_id" .= thMId]
+outJSON (OutVideo mId thMId) = mediaJSON "video" $ ["media_id" .= mId] ++ (maybeToList $ fmap ("thumb_media_id" .=) thMId)
 outJSON (OutMusic mbTitle mbDescr mbURL mbHQURL mId) = mediaJSON "music" $
   mbJSON "title" mbTitle ++
   mbJSON "description" mbDescr ++

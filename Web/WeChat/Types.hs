@@ -92,12 +92,15 @@ data OutMessageContent
    = OutText  { outTextContent :: Text }
    | OutImage { outMediaID     :: MediaID }
    | OutAudio { outMediaID     :: MediaID }
-   | OutVideo { outMediaID     :: MediaID, outThumbMediaID :: MediaID }
+   | OutVideo { outMediaID     :: MediaID
+              , outThumbMediaID :: Maybe MediaID
+              }
    | OutMusic { outTitle        :: Maybe Text
               , outDescription  :: Maybe Text
               , outMusicURL     :: Maybe URL
               , outHQMusicURL   :: Maybe URL
-              , outThumbMediaID :: MediaID }
+              , outThumbMediaID :: Maybe MediaID
+              }
    | OutRich  { outArticles     :: [OutRichArticle] }
   deriving (Eq, Show)
 

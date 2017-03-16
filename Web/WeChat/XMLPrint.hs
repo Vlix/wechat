@@ -49,15 +49,15 @@ printOutContent :: OutMessageContent -> [Element]
 printOutContent (OutText txt) = outXML "text" [textTag "Content" txt]
 printOutContent (OutImage mID) = mediaXML "Image" [textTag "MediaId" mID]
 printOutContent (OutAudio mID) = mediaXML "Voice" [textTag "MediaId" mID]
-printOutContent (OutVideo mId thMId) = mediaXML "Video"
-  [textTag "MediaId" mId, textTag "ThumbMediaId" thMId]
+printOutContent (OutVideo mId thMId) = mediaXML "Video" $
+  [textTag "MediaId" mId] ++ mbTag (textTag "ThumbMediaId") thMId
 printOutContent (OutMusic mbTitle mbDescr mbURL mbHQURL mID) =
   mediaXML "Music" $
     mbTag (textTag "Title") mbTitle ++
     mbTag (textTag "Description") mbDescr ++
     mbTag (textTag "MusicUrl") mbURL ++
     mbTag (textTag "HQMusicUrl") mbHQURL ++
-    [textTag "ThumbMediaId" mID]
+    mbTag (textTag "ThumbMediaId") mID
 printOutContent (OutRich articles) = outXML "news" $
   [intTag "ArticleCount" (length articles)] ++
   map printOutArticle articles

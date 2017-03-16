@@ -52,7 +52,8 @@ encryptMsg aeskey text appid =
         random16 <- sequence $ take 16 $ repeat $ getRandom alphaNums
         let toEncrypt = padPKCS7 $ toByteString random16 <> strLen <> text <> appid
             ciphertxt = cbcEncrypt key iv toEncrypt
-        return $ Right ciphertxt
+            encodedTxt = B64.encode ciphertxt
+        return $ Right encodedTxt
 
 decryptMsg :: Monad m => ByteString -> ByteString -> ByteString -> m (Either String ByteString)
 decryptMsg aeskey encrypted appid =

@@ -21,11 +21,9 @@ import           Data.Monoid            ((<>))
 import           Data.Text              (Text)
 import qualified Data.Text              as T
 import           Text.XML.Light
-import           Text.XML.Light.Lexer   (XmlSource)
 
 
-
-parseInMessage :: XmlSource s => s -> Maybe (Either InEncryptedMessage InMessage)
+parseInMessage :: Text -> Maybe (Either InEncryptedMessage InMessage)
 parseInMessage s = parseXMLDoc s >>= parseInMessage'
 
 printOutMessage :: OutCallbackMessage -> Text

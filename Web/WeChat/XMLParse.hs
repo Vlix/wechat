@@ -2,6 +2,7 @@ module Web.WeChat.XMLParse where
  
 import           Control.Monad          (guard)
 
+import           Data.Char              (isSpace)
 import           Data.Maybe             (fromMaybe)
 import           Data.Text              (Text)
 import qualified Data.Text              as T
@@ -13,13 +14,22 @@ import           Web.WeChat.Types
 
 
 textContent :: Element -> Text
-textContent = T.pack . strContent
+textContent = T.pack . strContent'
+
+-- strContent' is a version of strContent that ignores all-whitespace text nodes
+-- when they aren't enclosed in CDATA[]
+strContent' :: Element -> String
+strContent' e = concat [ cd
+                       | c <- onlyText $ elContent e
+                       , let cd = cdData c
+                       , not (all isSpace cd) || cdVerbatim c == CDataVerbatim
+                       ]
 
 tag :: Text -> QName
 tag = unqual . T.unpack
 
 readContent :: Read a => Element -> Maybe a
-readContent = readMaybe . strContent
+readContent = readMaybe . strContent'
 
 intContent :: Element -> Maybe Integer
 intContent = readContent

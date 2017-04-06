@@ -352,3 +352,22 @@
   <Poiname><![CDATA[[Location]]]></Poiname>
 </SendLocationInfo>
 </xml>
+
+<!-- Check Chinese input -->
+<xml>
+    <ToUserName>
+        <![CDATA[gh_261463ad81a6]]>
+    </ToUserName>
+    <FromUserName>
+        <![CDATA[oO5uw0Q_69_lA-frq4G1Us9mlXKU]]>
+    </FromUserName>
+    <CreateTime>1491476979</CreateTime>
+    <MsgType>
+        <![CDATA[text]]>
+    </MsgType>
+    <Content>
+        <![CDATA[中文]]>
+    </Content>
+    <MsgId>6405844847960073166</MsgId>
+</xml>
+
